@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bedstorm - Premium Video Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Age Verification Modal */
+        .age-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .age-modal-content {
+            background: #1a1a1a;
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #DBA506;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .age-modal h2 {
+            color: #DBA506;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .age-modal p {
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-age {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-yes {
+            background: #DBA506;
+            color: #000;
+        }
+
+        .btn-yes:hover {
+            background: #F5DE50;
+        }
+
+        .btn-no {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-no:hover {
+            background: #555;
+        }
+
+        /* Header */
+        .header {
+            background: #000000;
+            padding: 1rem 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #DBA506;
+            text-decoration: none;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #DBA506;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 0.6rem 1.2rem;
+            background: #DBA506;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #F5DE50;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #DBA506;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Categories */
+        .categories {
+            margin-bottom: 3rem;
+        }
+
+        .categories h2 {
+            margin-bottom: 1rem;
+            color: #DBA506;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .category-tab {
+            padding: 0.6rem 1.2rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover, .category-tab.active {
+            background: #DBA506;
+            color: #000;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .video-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #333;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            border-color: #DBA506;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #333, #1a1a1a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .play-button {
+            position: absolute;
+            background: rgba(219, 165, 6, 0.9);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .video-info {
+            padding: 1rem;
+        }
+
+        .video-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .video-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .star {
+            color: #DBA506;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 2rem;
+            color: #DBA506;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            color: #ccc;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-container {
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .category-tabs {
+                justify-content: center;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Age Verification Modal -->
+    <div class="age-modal" id="ageModal">
+        <div class="age-modal-content">
+            <h2>⚠️ Age Verification</h2>
+            <p>This website contains adult content. You must be 18+ years old to proceed.</p>
+            <div class="age-buttons">
+                <button class="btn-age btn-yes" onclick="verifyAge(true)">I'm 18+ Years Old</button>
+                <button class="btn-age btn-no" onclick="verifyAge(false)">I'm Under 18</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Website -->
+    <div id="mainSite" class="hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="nav-container">
+                <a href="#" class="logo">🎬 BEDSTORM</a>
+                <div class="search-container">
+                    <input type="text" class="search-bar" placeholder="Search videos..." id="searchInput">
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-btn">Admin Login</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Welcome to Bedstorm</h1>
+                <p>Explore our collection of premium videos. High quality content for mature audiences.</p>
+            </section>
+
+            <!-- Categories -->
+            <section class="categories">
+                <h2>Browse Categories</h2>
+                <div class="category-tabs">
+                    <div class="category-tab active" onclick="filterCategory('all')">All Videos</div>
+                    <div class="category-tab" onclick="filterCategory('featured')">Featured</div>
+                    <div class="category-tab" onclick="filterCategory('latest')">Latest</div>
+                    <div class="category-tab" onclick="filterCategory('popular')">Most Popular</div>
+                    <div class="category-tab" onclick="filterCategory('romance')">Romance</div>
+                    <div class="category-tab" onclick="filterCategory('drama')">Drama</div>
+                </div>
+            </section>
+
+            <!-- Video Grid -->
+            <section class="video-grid" id="videoGrid">
+                <!-- Sample Video Cards -->
+                <div class="video-card" data-category="featured">
+                    <div class="video-thumbnail">
+                        🎭
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Featured Content #1</div>
+                        <div class="video-meta">
+                            <span>Duration: 25:30</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="latest">
+                    <div class="video-thumbnail">
+                        🌟
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Latest Upload</div>
+                        <div class="video-meta">
+                            <span>Duration: 18:45</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.6</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="popular">
+                    <div class="video-thumbnail">
+                        🔥
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Most Watched</div>
+                        <div class="video-meta">
+                            <span>Duration: 32:15</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.9</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="romance">
+                    <div class="video-thumbnail">
+                        💕
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Romance Collection</div>
+                        <div class="video-meta">
+                            <span>Duration: 28:20</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="drama">
+                    <div class="video-thumbnail">
+                        🎪
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Drama Series</div>
+                        <div class="video-meta">
+                            <span>Duration: 42:10</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="featured">
+                    <div class="video-thumbnail">
+                        ✨
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Premium Content</div>
+                        <div class="video-meta">
+                            <span>Duration: 35:55</span>
+                            <div class="video-rating">
+                                <span class="star">★</span>
+                                <span>4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 id="totalVideos">127</h3>
+                        <p>Total Videos</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="totalViews">12.5K</h3>
+                        <p>Total Views</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="activeUsers">89</h3>
+                        <p>Active Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="totalLikes">2.1K</h3>
+                        <p>Total Likes</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Bedstorm. Premium adult content platform. 18+ only.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Age verification
+        function verifyAge(isAdult) {
+            if (isAdult) {
+                document.getElementById('ageModal').style.display = 'none';
+                document.getElementById('mainSite').classList.remove('hidden');
+                localStorage.setItem('ageVerified', 'true');
+            } else {
+                alert('You must be 18+ to access this website.');
+                window.location.href = 'https://google.com';
+            }
+        }
+
+        // Check if age already verified
+        window.onload = function() {
+            if (localStorage.getItem('ageVerified') === 'true') {
+                document.getElementById('ageModal').style.display = 'none';
+                document.getElementById('mainSite').classList.remove('hidden');
+            }
+        }
+
+        // Category filtering
+        function filterCategory(category) {
+            const cards = document.querySelectorAll('.video-card');
+            const tabs = document.querySelectorAll('.category-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.video-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.video-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Video card click
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', function() {
+                alert('Video player will open here. This will be implemented in next steps!');
+            });
+        });
+
+        // Update stats dynamically
+        function updateStats() {
+            const stats = {
+                totalVideos: Math.floor(Math.random() * 50) + 100,
+                totalViews: (Math.random() * 10 + 10).toFixed(1) + 'K',
+                activeUsers: Math.floor(Math.random() * 20) + 70,
+                totalLikes: (Math.random() * 1 + 2).toFixed(1) + 'K'
+            };
+            
+            Object.keys(stats).forEach(key => {
+                document.getElementById(key).textContent = stats[key];
+            });
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+  </html>
