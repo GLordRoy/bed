@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player - Bedstorm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #000000;
+            padding: 1rem 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #DBA506;
+            text-decoration: none;
+        }
+
+        .nav-btn {
+            padding: 0.6rem 1.2rem;
+            background: #DBA506;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #F5DE50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .video-section {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-placeholder {
+            font-size: 4rem;
+            color: #666;
+        }
+
+        .play-btn {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(219, 165, 6, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: #F5DE50;
+            transform: scale(1.1);
+        }
+
+        .video-info h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #DBA506;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            color: #888;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            background: #333;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .like-btn:hover {
+            background: #DBA506;
+            color: #000;
+        }
+
+        .dislike-btn:hover {
+            background: #cc3333;
+        }
+
+        .share-btn:hover {
+            background: #4CAF50;
+        }
+
+        .video-description {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-description h3 {
+            color: #DBA506;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            height: fit-content;
+        }
+
+        .comments-section {
+            margin-bottom: 2rem;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .comments-header h3 {
+            color: #DBA506;
+        }
+
+        .comments-count {
+            color: #888;
+        }
+
+        .comment-form {
+            margin-bottom: 2rem;
+        }
+
+        .comment-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #DBA506;
+        }
+
+        .comment-btn {
+            background: #DBA506;
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .comment-btn:hover {
+            background: #F5DE50;
+        }
+
+        .comment-item {
+            background: #2a2a2a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .comment-user {
+            font-weight: bold;
+            color: #DBA506;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-text {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .related-video {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .related-video:hover {
+            background: #333;
+        }
+
+        .related-thumbnail {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(135deg, #333, #1a1a1a);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .related-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #fff;
+        }
+
+        .related-meta {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .video-player {
+                height: 250px;
+            }
+
+            .video-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .video-actions {
+                flex-wrap: wrap;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🎬 BEDSTORM</a>
+            <a href="index.html" class="nav-btn">← Back to Home</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="video-section">
+            <div class="video-player" id="videoPlayer">
+                <div class="video-placeholder">🎭</div>
+                <div class="play-btn" onclick="playVideo()">▶</div>
+            </div>
+
+            <div class="video-info">
+                <h1 id="videoTitle">Featured Premium Content</h1>
+                
+                <div class="video-meta">
+                    <span>👀 <span id="viewCount">1,234</span> views</span>
+                    <span>📅 2 days ago</span>
+                    <span>⏱️ Duration: 25:30</span>
+                </div>
+
+                <div class="stats">
+                    <div class="rating">
+                        <span style="color: #DBA506;">★★★★☆</span>
+                        <span>4.8/5</span>
+                    </div>
+                </div>
+
+                <div class="video-actions">
+                    <button class="action-btn like-btn" onclick="likeVideo()">
+                        👍 <span id="likeCount">89</span>
+                    </button>
+                    <button class="action-btn dislike-btn" onclick="dislikeVideo()">
+                        👎 <span id="dislikeCount">5</span>
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareVideo()">
+                        📤 Share
+                    </button>
+                </div>
+
+                <div class="video-description">
+                    <h3>📝 Description</h3>
+                    <p>This is a premium quality video featuring exclusive content. High-definition video with professional production value.</p>
+                    <p><strong>Category:</strong> Featured Content</p>
+                    <p><strong>Tags:</strong> Premium, HD, Exclusive, Featured</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="comments-section">
+                <div class="comments-header">
+                    <h3>💬 Comments</h3>
+                    <span class="comments-count"><span id="commentCount">12</span> comments</span>
+                </div>
+
+                <div class="comment-form">
+                    <textarea class="comment-input" placeholder="Add a comment..." id="commentText"></textarea>
+                    <button class="comment-btn" onclick="addComment()">Post Comment</button>
+                </div>
+
+                <div class="comments-list" id="commentsList">
+                    <div class="comment-item">
+                        <div class="comment-user">🔥 User123</div>
+                        <div class="comment-text">Amazing quality! Love this content.</div>
+                        <div class="comment-time">2 hours ago</div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-user">⭐ VideoLover</div>
+                        <div class="comment-text">Perfect video quality and great content.</div>
+                        <div class="comment-time">5 hours ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color: #DBA506; margin-bottom: 1rem;">🎬 Related Videos</h3>
+            
+            <div class="related-video" onclick="loadRelatedVideo('Latest Upload')">
+                <div class="related-thumbnail">🌟</div>
+                <div class="related-info">
+                    <h4>Latest Upload</h4>
+                    <div class="related-meta">Duration: 18:45 • 890 views</div>
+                </div>
+            </div>
+
+            <div class="related-video" onclick="loadRelatedVideo('Most Watched')">
+                <div class="related-thumbnail">🔥</div>
+                <div class="related-info">
+                    <h4>Most Watched Content</h4>
+                    <div class="related-meta">Duration: 32:15 • 2.1K views</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let likes = 89;
+        let dislikes = 5;
+        let views = 1234;
+
+        function playVideo() {
+            document.getElementById('videoPlayer').innerHTML = 
+                '<video width="100%" height="100%" controls autoplay style="border-radius: 12px;">' +
+                '<source src="#" type="video/mp4">' +
+                'Your browser does not support the video tag.' +
+                '</video>';
+            
+            views++;
+            document.getElementById('viewCount').textContent = views.toLocaleString();
+        }
+
+        function likeVideo() {
+            likes++;
+            document.getElementById('likeCount').textContent = likes;
+        }
+
+        function dislikeVideo() {
+            dislikes++;
+            document.getElementById('dislikeCount').textContent = dislikes;
+        }
+
+        function shareVideo() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Video link copied!');
+        }
+
+        function addComment() {
+            const commentText = document.getElementById('commentText').value.trim();
+            if (commentText === '') {
+                alert('Please enter a comment!');
+                return;
+            }
+
+            const commentHTML = 
+                '<div class="comment-item">' +
+                '<div class="comment-user">👤 You</div>' +
+                '<div class="comment-text">' + commentText + '</div>' +
+                '<div class="comment-time">Just now</div>' +
+                '</div>';
+
+            document.getElementById('commentsList').insertAdjacentHTML('afterbegin', commentHTML);
+            document.getElementById('commentText').value = '';
+            
+            const currentCount = parseInt(document.getElementById('commentCount').textContent);
+            document.getElementById('commentCount').textContent = currentCount + 1;
+        }
+
+        function loadRelatedVideo(title) {
+            document.getElementById('videoTitle').textContent = title;
+            document.getElementById('videoPlayer').innerHTML = 
+                '<div class="video-placeholder">🎭</div>' +
+                '<div class="play-btn" onclick="playVideo()">▶</div>';
+        }
+    </script>
+</body>
+</html>
